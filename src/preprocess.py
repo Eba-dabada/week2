@@ -7,7 +7,7 @@ def load_data(path):
     return df
 
 if __name__ == "__main__":
-    path = r"C:\Users\EayeR\Documents\week 2\bank-full.csv"
+    path = r"C:\Users\Ivan\Desktop\week2\week2\bank-full.csv"
     df = load_data(path)
     
     print(df.head())

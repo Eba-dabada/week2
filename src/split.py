@@ -2,6 +2,7 @@ import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from torch.utils.data import TensorDataset, DataLoader
 from preprocess import load_data
 
 def split_data(df):
@@ -44,22 +45,44 @@ def split_data(df):
     y_test_tensor  = torch.tensor(y_test.values, dtype=torch.float32).unsqueeze(1)
 
 
-    return X_train_tensor, X_val_tensor, X_test_tensor, y_train_tensor, y_val_tensor, y_test_tensor
+    train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
+    val_dataset   = TensorDataset(X_val_tensor, y_val_tensor)
+    test_dataset  = TensorDataset(X_test_tensor, y_test_tensor)
+
+    train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
+    val_loader   = DataLoader(val_dataset, batch_size=256, shuffle=False)
+    test_loader  = DataLoader(test_dataset, batch_size=256, shuffle=False)
+    num_features = X_train_tensor.shape[1]
+    feature_names = X_train_encoded.columns.tolist()
+    return train_loader, val_loader, test_loader, num_features, feature_names
 
 if __name__ == "__main__":
-    path = r"C:\Users\EayeR\Documents\week 2\bank-full.csv"
+    path = r"C:\Users\Ivan\Desktop\week2\week2\bank-full.csv"
 
     df = load_data(path)
+    train_loader, val_loader, test_loader, num_features, feature_names = split_data(df)
     
-    X_train, X_val, X_test, y_train, y_val, y_test = split_data(df)
-    
-    print("\n--- PyTorch Tensor Shapes Inspection ---")
-    print(f"X_train shape: {X_train.shape} | Expected: (Rows, Features)")
-    print(f"y_train shape: {y_train.shape} | Expected: (Rows, 1)")
-    print("-" * 40)
-    print(f"X_val shape:   {X_val.shape}")
-    print(f"y_val shape:   {y_val.shape}")
-    print("-" * 40)
-    print(f"X_test shape:  {X_test.shape}")
-    print(f"y_test shape:  {y_test.shape}")
+    batch_X, batch_y = next(iter(train_loader))
+    print(f"Total input features: {num_features}")
+    print(f"Batch X shape: {batch_X.shape} | dtype: {batch_X.dtype}")
+    print(f"Batch y shape: {batch_y.shape} | dtype: {batch_y.dtype}")
+    print(f"Total input features: {len(feature_names)}")
+    print("\nAll encoded columns:")
+    print(feature_names)
 
+
+    unknown_cols = [col for col in feature_names if "unknown" in col]
+    print(f"\nSurviving 'unknown' columns ({len(unknown_cols)}):")
+    print(unknown_cols)
+
+    print(f"Train size: {len(train_loader.dataset)}")
+    print(f"Val size:   {len(val_loader.dataset)}")
+    print(f"Test size:  {len(test_loader.dataset)}")
+
+    train_y_mean = train_loader.dataset.tensors[1].mean().item()
+    val_y_mean   = val_loader.dataset.tensors[1].mean().item()
+    test_y_mean  = test_loader.dataset.tensors[1].mean().item()
+
+    print(f"\nTrain positive class ratio: {train_y_mean:.4f}")
+    print(f"Val positive class ratio:   {val_y_mean:.4f}")
+    print(f"Test positive class ratio:  {test_y_mean:.4f}")
