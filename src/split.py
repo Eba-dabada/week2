@@ -2,9 +2,18 @@ import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from torch.utils.data import TensorDataset, DataLoader
-from preprocess import load_data
+from torch.utils.data import Dataset, DataLoader
+from src.preprocess import load_data
 
+class BankDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = X
+        self.y = y
+    def __len__(self):
+        return len(self.X)
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
+    
 def split_data(df):
 
     df["y"] = df["y"].map({"yes": 1, "no": 0})
@@ -45,9 +54,9 @@ def split_data(df):
     y_test_tensor  = torch.tensor(y_test.values, dtype=torch.float32).unsqueeze(1)
 
 
-    train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
-    val_dataset   = TensorDataset(X_val_tensor, y_val_tensor)
-    test_dataset  = TensorDataset(X_test_tensor, y_test_tensor)
+    train_dataset = BankDataset(X_train_tensor, y_train_tensor)
+    val_dataset   = BankDataset(X_val_tensor, y_val_tensor)
+    test_dataset  = BankDataset(X_test_tensor, y_test_tensor)
 
     train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
     val_loader   = DataLoader(val_dataset, batch_size=256, shuffle=False)
@@ -79,9 +88,9 @@ if __name__ == "__main__":
     print(f"Val size:   {len(val_loader.dataset)}")
     print(f"Test size:  {len(test_loader.dataset)}")
 
-    train_y_mean = train_loader.dataset.tensors[1].mean().item()
-    val_y_mean   = val_loader.dataset.tensors[1].mean().item()
-    test_y_mean  = test_loader.dataset.tensors[1].mean().item()
+    train_y_mean = train_loader.dataset.y.mean().item()
+    val_y_mean   = val_loader.dataset.y.mean().item()
+    test_y_mean  = test_loader.dataset.y.mean().item()
 
     print(f"\nTrain positive class ratio: {train_y_mean:.4f}")
     print(f"Val positive class ratio:   {val_y_mean:.4f}")
