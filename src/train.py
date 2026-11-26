@@ -124,7 +124,14 @@ def train_model(model, train_loader, val_loader, loss_fn, optimizer, epochs, che
             best_val_loss = val_loss
             best_epoch = epoch + 1
             best_weights = copy.deepcopy(model.state_dict())
-            torch.save(best_weights, checkpoint_path)
+            save_checkpoint(
+                checkpoint_path,
+                model,
+                optimizer,
+                epoch=best_epoch,
+                best_metric=best_val_loss,
+                history={"train_losses": train_losses, "val_losses": val_losses},
+            )
 
         print(f"Epoch {epoch + 1}/{epochs} | Train Loss: {avg_loss:.4f} | Val Loss: {val_loss:.4f}")
 
@@ -152,7 +159,7 @@ def plot_losses(train_losses, val_losses):
 
 if __name__ == "__main__":
     torch.manual_seed(42)
-    path = r"C:\Users\Ivan\Desktop\week2\week2\bank-full.csv"
+    path = r"C:\Users\EayeR\Documents\week 2\bank-full.csv"
     df = load_data(path)
     train_loader, val_loader, test_loader, num_features, feature_names = split_data(df)
 
@@ -166,7 +173,7 @@ if __name__ == "__main__":
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-    train_losses, val_losses = train_model(model, train_loader, val_loader, loss_fn, optimizer, epochs=2)
+    train_losses, val_losses = train_model(model, train_loader, val_loader, loss_fn, optimizer, epochs=100)
 
     preds, probs, y_true = get_prediction(model, val_loader, threshold=0.6)
     metrics = get_metrics(y_true.numpy(), preds.numpy())
