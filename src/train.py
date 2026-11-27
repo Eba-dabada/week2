@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import copy
 import matplotlib.pyplot as plt
-from src.preprocess import load_data
+from src.preprocess import load_data, fetch_data
 from src.split import split_data
 
 class Bank_Marketing(nn.Module):
@@ -159,8 +159,7 @@ def plot_losses(train_losses, val_losses):
 
 if __name__ == "__main__":
     torch.manual_seed(42)
-    path = r"C:\Users\EayeR\Documents\week 2\bank-full.csv"
-    df = load_data(path)
+    df = load_data(fetch_data())
     train_loader, val_loader, test_loader, num_features, feature_names = split_data(df)
 
     model = Bank_Marketing(num_feature=num_features)

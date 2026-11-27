@@ -1,5 +1,5 @@
 from sklearn.ensemble import HistGradientBoostingClassifier
-from src.preprocess import load_data
+from src.preprocess import load_data, fetch_data
 from src.split import split_data
 import numpy as np
 
@@ -22,8 +22,7 @@ def trivial(y_train, shape):
     return np.full(shape, fill_value)
 
 if __name__ == "__main__":
-    path = r"C:\Users\Ivan\Desktop\week2\week2\bank-full.csv"
-    df = load_data(path)
+    df = load_data(fetch_data())
     train_loader, val_loader, _, _, _ = split_data(df)
 
     X_train = train_loader.dataset.X.numpy()
