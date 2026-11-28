@@ -5,9 +5,9 @@ pythonpath = ["."]
 train_smoke = ["-m", "src.train", "--smoke", "--out", "runs/smoke.pt"]
 evaluate = ["-m", "src.evaluate", "--checkpoint", "{checkpoint}", "--metrics-out", "{metrics_out}"]
 split = ["-m", "src.split", "--out", "{split_out}"]
-checkpoint_url = "https://github.com/Eba-dabada/week2/releases/download/v1.0.0/best_model.pt"
+checkpoint_url = "https://github.com/Eba-dabada/week2/releases/download/v2.0.0/best_model.pt"
 metric_name = "test_f1"
-metric_value =  0.4916
+metric_value =  0.4909
 tolerance = 0.006
 
 [build-system]
