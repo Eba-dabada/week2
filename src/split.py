@@ -3,7 +3,7 @@ import torch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset, DataLoader
-from src.preprocess import load_data
+from src.preprocess import load_data, fetch_data
 
 class BankDataset(Dataset):
     def __init__(self, X, y):
@@ -66,9 +66,7 @@ def split_data(df):
     return train_loader, val_loader, test_loader, num_features, feature_names
 
 if __name__ == "__main__":
-    path = r"C:\Users\Ivan\Desktop\week2\week2\bank-full.csv"
-
-    df = load_data(path)
+    df = load_data(fetch_data())
     train_loader, val_loader, test_loader, num_features, feature_names = split_data(df)
     
     batch_X, batch_y = next(iter(train_loader))
