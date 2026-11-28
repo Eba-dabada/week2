@@ -1,8 +1,30 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
 [tool.reproduce]
 train_smoke = ["-m", "src.train", "--smoke", "--out", "runs/smoke.pt"]
 evaluate = ["-m", "src.evaluate", "--checkpoint", "{checkpoint}", "--metrics-out", "{metrics_out}"]
 split = ["-m", "src.split", "--out", "{split_out}"]
 checkpoint_url = ""
-metric_name = ""
-metric_value = 0.0
+metric_name = "test_f1"
+metric_value =  0.4916
 tolerance = 0.006
+
+[build-system]
+requires = ["setuptools==84.2.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bank-marketing-classifier"
+version = "1.0.0"
+requires-python = ">=3.12"
+dependencies = [
+    "torch==2.14.1",
+    "numpy==2.2.0",
+    "pandas==3.1.1",
+    "scikit-learn==1.6.0",
+    "matplotlib==3.10.0",
+]
+
+[tool.setuptools]
+packages = ["src"]
