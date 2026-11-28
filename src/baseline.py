@@ -23,7 +23,7 @@ def trivial(y_train, shape):
 
 if __name__ == "__main__":
     df = load_data(fetch_data())
-    train_loader, val_loader, _, _, _ = split_data(df)
+    train_loader, val_loader, _, _, _, _ = split_data(df)
 
     X_train = train_loader.dataset.X.numpy()
     y_train = train_loader.dataset.y.numpy().ravel()
